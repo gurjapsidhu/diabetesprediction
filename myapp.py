@@ -96,7 +96,7 @@ def app():
             width: 50%;  /* Center button */
         }
         .button:hover {
-            background-color: #C70039;  /* Darker shade for hover effect */
+            background-color: #008000;  /* Darker shade for hover effect */
         }
         .footer {
             text-align: center;
