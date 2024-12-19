@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 import joblib
 from PIL import Image
@@ -104,7 +105,6 @@ def app():
 
         # Predict
         prediction = model.predict(input_data_scaled)
-        prediction_proba = model.predict_proba(input_data_scaled)
 
         # Display results
         st.subheader("Prediction Result:")
@@ -112,8 +112,6 @@ def app():
             st.write("### No Diabetes")
         else:
             st.write("### Diabetes Detected")
-
-        st.write(f"Prediction Probability: {prediction_proba[0][1]*100:.2f}%")
 
 # Run the app
 if __name__ == "__main__":
