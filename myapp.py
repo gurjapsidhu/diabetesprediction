@@ -116,6 +116,8 @@ def app():
 
     # Sidebar for input features
     st.sidebar.markdown("<div class='sidebar-title'>Input Health Parameters</div>", unsafe_allow_html=True)
+
+    # Input fields with sliders
     preg = st.sidebar.number_input('Pregnancies', min_value=0, max_value=17, value=3, step=1, format="%d", key="preg")
     preg_slider = st.sidebar.slider('Pregnancies (Slider)', min_value=0, max_value=17, value=3, step=1)
 
@@ -140,9 +142,19 @@ def app():
     age = st.sidebar.number_input('Age', min_value=0, max_value=120, value=29, step=1, key="age")
     age_slider = st.sidebar.slider('Age (Slider)', min_value=0, max_value=120, value=29, step=1)
 
+    # Sync slider and number input values
+    preg = preg_slider
+    glucose = glucose_slider
+    bp = bp_slider
+    skinthickness = skinthickness_slider
+    insulin = insulin_slider
+    bmi = bmi_slider
+    dpf = dpf_slider
+    age = age_slider
+
     # Main section for prediction results
     st.markdown("<div class='section-title'>Prediction Results</div>", unsafe_allow_html=True)
-    input_data = np.array([preg_slider, glucose_slider, bp_slider, skinthickness_slider, insulin_slider, bmi_slider, dpf_slider, age_slider]).reshape(1, -1)
+    input_data = np.array([preg, glucose, bp, skinthickness, insulin, bmi, dpf, age]).reshape(1, -1)
     scaled_input_data = scaler.transform(input_data)
     prediction = model.predict(scaled_input_data)
 
