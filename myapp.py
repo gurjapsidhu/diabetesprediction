@@ -11,14 +11,14 @@ from PIL import Image
 # Set page configuration
 st.set_page_config(page_title="Diabetes Prediction", layout="wide")
 
-# Cache the function to load data
-@st.cache
+# Cache the function to load data using st.cache_data
+@st.cache_data
 def load_data():
     diabetes_df = pd.read_csv('diabetes (2).csv')
     return diabetes_df
 
-# Cache the function to preprocess data
-@st.cache
+# Cache the function to preprocess data using st.cache_data
+@st.cache_data
 def preprocess_data(df):
     # Split the data into input and target variables
     X = df.drop('Outcome', axis=1)
@@ -33,8 +33,8 @@ def preprocess_data(df):
     
     return X_train, X_test, y_train, y_test, scaler
 
-# Cache the function to train the model
-@st.cache
+# Cache the function to train the model using st.cache_resource
+@st.cache_resource
 def train_model(X_train, y_train):
     model = RandomForestClassifier()
     model.fit(X_train, y_train)
@@ -72,7 +72,7 @@ def app():
     
     # Display an image in the header
     img = Image.open(r"img.jpeg")
-    st.image(img, width=300, use_column_width=False)
+    st.image(img, width=300, use_container_width=True)
 
     # Sidebar for input features
     st.sidebar.markdown("<h2 style='color: #4CAF50;'>Input Features</h2>", unsafe_allow_html=True)
