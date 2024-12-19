@@ -56,48 +56,52 @@ def app():
         <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
+            background: linear-gradient(to right, #f4f4f9, #e8f1f5);
         }
         .header {
             text-align: center;
             font-size: 40px;
             font-weight: bold;
-            color: #333;
+            color: #2c3e50;
             margin-bottom: 20px;
         }
         .sub-header {
             text-align: center;
             font-size: 18px;
-            color: #555;
+            color: #34495e;
             margin-bottom: 30px;
         }
         .section-title {
             font-size: 24px;
-            color: #4CAF50;
+            color: #27ae60;
             margin-bottom: 10px;
         }
         .sidebar-title {
             font-size: 20px;
-            color: #4CAF50;
+            color: #2980b9;
             margin-bottom: 10px;
         }
         .button {
-            background-color: #007BFF;
+            background-color: #3498db;
             color: white;
             padding: 10px 15px;
             border: none;
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
         .button:hover {
-            background-color: #0056b3;
+            background-color: #1abc9c;
         }
         .footer {
             text-align: center;
             font-size: 14px;
-            color: #777;
+            color: #7f8c8d;
             margin-top: 30px;
+        }
+        .input-field {
+            margin-bottom: 10px;
         }
         </style>
         <div class="header">Diabetes Prediction App</div>
@@ -106,31 +110,16 @@ def app():
         unsafe_allow_html=True
     )
 
-    # Display developer image and about section
-    col1, col2 = st.columns([1, 3])
-    with col1:
-        img = Image.open("img.jpeg")
-        st.image(img, width=150, caption="Developer: Gurjap Singh")
-    with col2:
-        st.markdown(
-            """
-            <div style="font-size: 16px; color: #333;">
-            <p><b>About:</b> I am Gurjap Singh, a machine learning enthusiast with a passion for creating impactful AI applications. This app is designed to help users gain insights into their health using advanced machine learning techniques.</p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
     # Sidebar for input features
     st.sidebar.markdown("<div class='sidebar-title'>Input Health Parameters</div>", unsafe_allow_html=True)
-    preg = st.sidebar.number_input('Pregnancies', min_value=0, max_value=17, value=3)
-    glucose = st.sidebar.slider('Glucose', 0, 199, 117)
-    bp = st.sidebar.slider('Blood Pressure', 0, 122, 72)
-    skinthickness = st.sidebar.slider('Skin Thickness', 0, 99, 23)
-    insulin = st.sidebar.slider('Insulin', 0, 846, 30)
-    bmi = st.sidebar.slider('BMI', 0.0, 67.1, 32.0)
-    dpf = st.sidebar.slider('Diabetes Pedigree Function', 0.078, 2.42, 0.3725, 0.001)
-    age = st.sidebar.slider('Age', 21, 81, 29)
+    preg = st.sidebar.number_input('Pregnancies', min_value=0, max_value=17, value=3, step=1, format="%d", key="preg")
+    glucose = st.sidebar.number_input('Glucose Level', min_value=0, max_value=200, value=117, step=1, key="glucose")
+    bp = st.sidebar.number_input('Blood Pressure (mmHg)', min_value=0, max_value=130, value=72, step=1, key="bp")
+    skinthickness = st.sidebar.number_input('Skin Thickness (mm)', min_value=0, max_value=100, value=23, step=1, key="skin")
+    insulin = st.sidebar.number_input('Insulin Level (µU/mL)', min_value=0, max_value=850, value=30, step=1, key="insulin")
+    bmi = st.sidebar.number_input('BMI', min_value=0.0, max_value=70.0, value=32.0, step=0.1, key="bmi")
+    dpf = st.sidebar.number_input('Diabetes Pedigree Function', min_value=0.0, max_value=3.0, value=0.3725, step=0.001, key="dpf")
+    age = st.sidebar.number_input('Age', min_value=0, max_value=120, value=29, step=1, key="age")
 
     # Main section for prediction results
     st.markdown("<div class='section-title'>Prediction Results</div>", unsafe_allow_html=True)
@@ -145,11 +134,12 @@ def app():
             else:
                 st.success("Prediction: This person does not have diabetes.", icon="✅")
 
-    # Footer
+    # About section
     st.markdown(
         """
         <div class="footer">
-            Created by Gurjap Singh | Contact: gurjapsidhu5666@gmail.com
+            <p><b>About:</b> This app is developed to provide a quick and reliable way to assess diabetes risk. Leveraging machine learning, it aims to make healthcare insights accessible to everyone.</p>
+            <p>Created by Gurjap Singh | Contact: gurjapsidhu5666@gmail.com</p>
         </div>
         """,
         unsafe_allow_html=True
