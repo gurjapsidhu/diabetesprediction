@@ -3,8 +3,8 @@ import pandas as pd
 import streamlit as st
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
+import joblib
 from PIL import Image
 
 # Set page configuration
@@ -82,6 +82,42 @@ def app():
         .button:hover {
             background-color: #0056b3;
         }
+        .red-button {
+            background-color: #FF4136;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .red-button:hover {
+            background-color: #d42d2b;
+        }
+        .input-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+        }
+        .input-box {
+            width: 100px;
+            text-align: center;
+            font-size: 1.2rem;
+            padding: 5px;
+            margin: 0 10px;
+        }
+        .centered-image {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
+        }
+        .result {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-top: 30px;
+        }
         </style>
         """,
         unsafe_allow_html=True
@@ -91,30 +127,35 @@ def app():
     st.markdown("<div class='subheader'>An AI-Powered Tool for Health Insights</div>", unsafe_allow_html=True)
 
     # Add image under the header
-    img = Image.open("img.jpeg")
-    st.image(img, use_column_width="auto", caption="AI-Powered Tool")
+    try:
+        img = Image.open("img.jpeg")
+        st.image(img, use_column_width="auto", caption="AI-Powered Tool", class_="centered-image")
+    except:
+        st.error("Image not found. Please ensure the image is in the correct directory.")
 
     # Sidebar for input
     st.sidebar.title("Input Features")
-    preg = st.sidebar.slider("Pregnancies", 0, 17, 3)
-    glucose = st.sidebar.slider("Glucose", 0, 199, 117)
-    bp = st.sidebar.slider("Blood Pressure", 0, 122, 72)
-    skinthickness = st.sidebar.slider("Skin Thickness", 0, 99, 23)
-    insulin = st.sidebar.slider("Insulin", 0, 846, 30)
-    bmi = st.sidebar.slider("BMI", 0.0, 67.1, 32.0)
-    dpf = st.sidebar.slider("Diabetes Pedigree Function", 0.078, 2.42, 0.3725, 0.001)
-    age = st.sidebar.slider("Age", 21, 81, 29)
+    preg = st.sidebar.number_input("Pregnancies", 0, 17, 3)
+    glucose = st.sidebar.number_input("Glucose", 0, 199, 117)
+    bp = st.sidebar.number_input("Blood Pressure", 0, 122, 72)
+    skinthickness = st.sidebar.number_input("Skin Thickness", 0, 99, 23)
+    insulin = st.sidebar.number_input("Insulin", 0, 846, 30)
+    bmi = st.sidebar.number_input("BMI", 0.0, 67.1, 32.0)
+    dpf = st.sidebar.number_input("Diabetes Pedigree Function", 0.078, 2.42, 0.3725, 0.001)
+    age = st.sidebar.number_input("Age", 21, 81, 29)
 
     # Prediction logic
     input_data = np.array([preg, glucose, bp, skinthickness, insulin, bmi, dpf, age]).reshape(1, -1)
     prediction = model.predict(input_data)
 
-    # Display prediction
-    st.markdown("<h3 style='text-align: center;'>Prediction Result</h3>", unsafe_allow_html=True)
-    if prediction == 1:
-        st.warning("This person has diabetes.")
-    else:
-        st.success("This person does not have diabetes.")
+    # Prediction Button
+    if st.button("Predict", key="predict_button", use_container_width=True):
+        st.markdown("<div class='result'>", unsafe_allow_html=True)
+        if prediction == 1:
+            st.warning("This person has diabetes.")
+        else:
+            st.success("This person does not have diabetes.")
+        st.markdown("</div>", unsafe_allow_html=True)
 
     # About Section
     st.markdown(
@@ -122,7 +163,7 @@ def app():
         <div class='about'>
             <h3>About the Developer</h3>
             <p>Gurjap Singh, 17 years old, AI and Machine Learning enthusiast.</p>
-            <a href='https://linkedin.com/in/gurjapsingh' target='_blank' class='button'>Connect on LinkedIn</a>
+            <a href='https://linkedin.com/in/gurjapsingh' target='_blank' class='red-button'>Connect on LinkedIn</a>
         </div>
         """,
         unsafe_allow_html=True
