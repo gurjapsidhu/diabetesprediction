@@ -4,7 +4,6 @@ import streamlit as st
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
-import joblib
 from PIL import Image
 
 # Set page configuration
@@ -71,16 +70,16 @@ def app():
             border-radius: 10px;
         }
         .button {
-            background-color: #007BFF;
+            background-color: #28a745;
             color: white;
             border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
+            padding: 12px 30px;
+            font-size: 1.2rem;
             border-radius: 5px;
             cursor: pointer;
         }
         .button:hover {
-            background-color: #0056b3;
+            background-color: #218838;
         }
         .red-button {
             background-color: #FF4136;
@@ -118,6 +117,12 @@ def app():
             font-size: 1.5rem;
             margin-top: 30px;
         }
+        .result.success {
+            color: #28a745;
+        }
+        .result.warning {
+            color: #FF4136;
+        }
         </style>
         """,
         unsafe_allow_html=True
@@ -130,7 +135,7 @@ def app():
     try:
         img = Image.open("img.jpeg")
         st.image(img, use_column_width="auto", caption="AI-Powered Tool", class_="centered-image")
-    except:
+    except Exception as e:
         st.error("Image not found. Please ensure the image is in the correct directory.")
 
     # Sidebar for input
@@ -152,9 +157,9 @@ def app():
     if st.button("Predict", key="predict_button", use_container_width=True):
         st.markdown("<div class='result'>", unsafe_allow_html=True)
         if prediction == 1:
-            st.warning("This person has diabetes.")
+            st.markdown("<span style='font-size: 2rem;'>✅</span> <span class='warning'>This person has diabetes.</span>", unsafe_allow_html=True)
         else:
-            st.success("This person does not have diabetes.")
+            st.markdown("<span style='font-size: 2rem;'>✔️</span> <span class='success'>This person does not have diabetes.</span>", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
     # About Section
