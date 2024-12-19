@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 import joblib
 from PIL import Image
@@ -55,65 +56,52 @@ def app():
         <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f9;
+            background: linear-gradient(to right, #f4f4f9, #e8f1f5);
         }
         .header {
             text-align: center;
             font-size: 40px;
             font-weight: bold;
-            color: #333;
+            color: #2c3e50;
             margin-bottom: 20px;
         }
         .sub-header {
             text-align: center;
             font-size: 18px;
-            color: #555;
+            color: #34495e;
             margin-bottom: 30px;
         }
         .section-title {
             font-size: 24px;
-            color: #4CAF50;
+            color: #27ae60;
             margin-bottom: 10px;
         }
         .sidebar-title {
             font-size: 20px;
-            color: #4CAF50;
+            color: #2980b9;
             margin-bottom: 10px;
         }
         .button {
-            background-color: #28a745;
+            background-color: #3498db;
             color: white;
             padding: 10px 15px;
             border: none;
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
-            width: auto;
+            transition: all 0.3s ease;
         }
         .button:hover {
-            background-color: #218838;
+            background-color: #1abc9c;
         }
         .footer {
             text-align: center;
             font-size: 14px;
-            color: #777;
+            color: #7f8c8d;
             margin-top: 30px;
         }
-        .link {
-            color: white;
-            text-decoration: none;
-        }
-        .result {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 20px;
-        }
-        .result.success {
-            color: green;
-        }
-        .result.error {
-            color: red;
+        .input-field {
+            margin-bottom: 10px;
         }
         </style>
         <div class="header">Diabetes Prediction App</div>
@@ -122,31 +110,16 @@ def app():
         unsafe_allow_html=True
     )
 
-    # Display developer image and about section
-    col1, col2 = st.columns([1, 3])
-    with col1:
-        img = Image.open("img.jpeg")  # Ensure the image path is correct
-        st.image(img, width=150, caption="Developer: Gurjap Singh")
-    with col2:
-        st.markdown(
-            """
-            <div style="font-size: 16px; color: #333;">
-            <p><b>About:</b> I am Gurjap Singh, a machine learning enthusiast with a passion for creating impactful AI applications. This app is designed to help users gain insights into their health using advanced machine learning techniques.</p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    # Sidebar for input features with plus/minus buttons
+    # Sidebar for input features
     st.sidebar.markdown("<div class='sidebar-title'>Input Health Parameters</div>", unsafe_allow_html=True)
-    preg = st.sidebar.number_input('Pregnancies', min_value=0, max_value=17, value=3, step=1)
-    glucose = st.sidebar.number_input('Glucose', min_value=0, max_value=199, value=117, step=1)
-    bp = st.sidebar.number_input('Blood Pressure', min_value=0, max_value=122, value=72, step=1)
-    skinthickness = st.sidebar.number_input('Skin Thickness', min_value=0, max_value=99, value=23, step=1)
-    insulin = st.sidebar.number_input('Insulin', min_value=0, max_value=846, value=30, step=1)
-    bmi = st.sidebar.number_input('BMI', min_value=0.0, max_value=67.1, value=32.0, step=0.1)
-    dpf = st.sidebar.number_input('Diabetes Pedigree Function', min_value=0.078, max_value=2.42, value=0.3725, step=0.001)
-    age = st.sidebar.number_input('Age', min_value=21, max_value=81, value=29, step=1)
+    preg = st.sidebar.number_input('Pregnancies', min_value=0, max_value=17, value=3, step=1, format="%d", key="preg")
+    glucose = st.sidebar.number_input('Glucose Level', min_value=0, max_value=200, value=117, step=1, key="glucose")
+    bp = st.sidebar.number_input('Blood Pressure (mmHg)', min_value=0, max_value=130, value=72, step=1, key="bp")
+    skinthickness = st.sidebar.number_input('Skin Thickness (mm)', min_value=0, max_value=100, value=23, step=1, key="skin")
+    insulin = st.sidebar.number_input('Insulin Level (µU/mL)', min_value=0, max_value=850, value=30, step=1, key="insulin")
+    bmi = st.sidebar.number_input('BMI', min_value=0.0, max_value=70.0, value=32.0, step=0.1, key="bmi")
+    dpf = st.sidebar.number_input('Diabetes Pedigree Function', min_value=0.0, max_value=3.0, value=0.3725, step=0.001, key="dpf")
+    age = st.sidebar.number_input('Age', min_value=0, max_value=120, value=29, step=1, key="age")
 
     # Main section for prediction results
     st.markdown("<div class='section-title'>Prediction Results</div>", unsafe_allow_html=True)
@@ -157,15 +130,16 @@ def app():
     if st.button("Predict", key="predict_button"):
         with st.spinner("Analyzing..."):
             if prediction == 1:
-                st.markdown("<div class='result error'><i class='fas fa-exclamation-triangle'></i> This person has diabetes.</div>", unsafe_allow_html=True)
+                st.error("Prediction: This person has diabetes.", icon="🚨")
             else:
-                st.markdown("<div class='result success'><i class='fas fa-check-circle'></i> This person does not have diabetes.</div>", unsafe_allow_html=True)
+                st.success("Prediction: This person does not have diabetes.", icon="✅")
 
-    # Footer with white link text
+    # About section
     st.markdown(
         """
         <div class="footer">
-            Created by Gurjap Singh | Contact: gurjapsidhu5666@gmail.com | <a href="https://linkedin.com/in/gurjapsingh" class="link" target="_blank">Connect on LinkedIn</a>
+            <p><b>About:</b> This app is developed to provide a quick and reliable way to assess diabetes risk. Leveraging machine learning, it aims to make healthcare insights accessible to everyone.</p>
+            <p>Created by Gurjap Singh | Contact: gurjapsidhu5666@gmail.com</p>
         </div>
         """,
         unsafe_allow_html=True
