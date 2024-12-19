@@ -83,7 +83,7 @@ def app():
         }
         .button {
             background-color: #FF5733;  /* A new vibrant color */
-            color: white;
+            color: green;
             padding: 20px 40px;  /* Increased padding for bigger button */
             border: none;
             border-radius: 10px;
