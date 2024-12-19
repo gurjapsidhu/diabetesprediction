@@ -150,7 +150,7 @@ def app():
         <div class="section-title">About Us</div>
         <p><b>Gurjap Singh</b> | Age: 17 | AI & ML Enthusiast and Developer</p>
         <p>I am passionate about Artificial Intelligence and Machine Learning. I love developing innovative solutions and am committed to pushing the boundaries of technology to create meaningful impact.</p>
-        <p>Connect with me on <a href="https://www.linkedin.com/in/gurjap-singh/" target="_blank">LinkedIn</a></p>
+        <p>Connect with me on <a href="https://www.linkedin.com/in/gurjap-singh-46696332a/" target="_blank">LinkedIn</a></p>
         """,
         unsafe_allow_html=True
     )
