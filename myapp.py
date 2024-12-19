@@ -113,6 +113,7 @@ def app():
         """,
         unsafe_allow_html=True
     )
+    
     img = Image.open(r"img.jpeg")
     img = img.resize((200,200))
     st.image(img,width=200)
