@@ -82,17 +82,20 @@ def app():
             margin-bottom: 10px;
         }
         .button {
-            background-color: #3498db;
+            background-color: #FF5733;  /* A new vibrant color */
             color: white;
-            padding: 10px 15px;
+            padding: 20px 40px;  /* Increased padding for bigger button */
             border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 20px;  /* Larger font size */
             cursor: pointer;
             transition: all 0.3s ease;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
         .button:hover {
-            background-color: #1abc9c;
+            background-color: #C70039;  /* Darker shade for hover effect */
         }
         .footer {
             text-align: center;
@@ -127,7 +130,7 @@ def app():
     scaled_input_data = scaler.transform(input_data)
     prediction = model.predict(scaled_input_data)
 
-    if st.button("Predict", key="predict_button"):
+    if st.button("Predict", key="predict_button", help="Click to predict if the person has diabetes"):
         with st.spinner("Analyzing..."):
             if prediction == 1:
                 st.error("Prediction: This person has diabetes.", icon="🚨")
