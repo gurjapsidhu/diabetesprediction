@@ -82,12 +82,12 @@ def app():
             margin-bottom: 10px;
         }
         .button {
-            background-color: #008000;  /* A new vibrant color */
-            color: green;
-            padding: 20px 40px;  /* Increased padding for bigger button */
+            background-color: #4CAF50;  /* Green color */
+            color: white;
+            padding: 15px 30px;  /* Increased padding for bigger button */
             border: none;
             border-radius: 10px;
-            font-size: 20px;  /* Larger font size */
+            font-size: 24px;  /* Larger font size */
             cursor: pointer;
             transition: all 0.3s ease;
             display: block;
@@ -96,7 +96,7 @@ def app():
             width: 50%;  /* Center button */
         }
         .button:hover {
-            background-color: #008000;  /* Darker shade for hover effect */
+            background-color: #45a049;  /* Darker shade for hover effect */
         }
         .footer {
             text-align: center;
@@ -138,7 +138,18 @@ def app():
             else:
                 st.success("Prediction: This person does not have diabetes.", icon="✅")
 
-    # About section
+    # About Us section
+    st.markdown(
+        """
+        <div class="section-title">About Us</div>
+        <p><b>Gurjap Singh</b> | Age: 17 | AI & ML Enthusiast and Developer</p>
+        <p>I am passionate about Artificial Intelligence and Machine Learning. I love developing innovative solutions and am committed to pushing the boundaries of technology to create meaningful impact.</p>
+        <p>Connect with me on <a href="https://www.linkedin.com/in/gurjap-singh/" target="_blank">LinkedIn</a></p>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Footer section
     st.markdown(
         """
         <div class="footer">
