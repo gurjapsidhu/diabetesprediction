@@ -113,10 +113,9 @@ def app():
         """,
         unsafe_allow_html=True
     )
-    
-                        img = Image.open(r"img.jpeg")
-                        img = img.resize((200,200))
-                        st.image(img,width=200)
+    img = Image.open(r"img.jpeg")
+    img = img.resize((200,200))
+    st.image(img,width=200)
 
     # Sidebar for input features
     st.sidebar.markdown("<div class='sidebar-title'>Input Health Parameters</div>", unsafe_allow_html=True)
