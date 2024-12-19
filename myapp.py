@@ -61,4 +61,11 @@ def app():
         .header {
             text-align: center;
             font-size: 3rem;
-           
+        }
+        </style>
+        <div class="header">
+            <h1>Diabetes Prediction</h1>
+        </div>
+        """
+    )
+
