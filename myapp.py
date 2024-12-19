@@ -9,7 +9,7 @@ import joblib
 from PIL import Image
 
 # Set page configuration
-st.set_page_config(page_title="Diabetes Prediction", layout="wide")
+st.set_page_config(page_title="Diabetes Prediction", layout="wide", initial_sidebar_state="expanded")
 
 # Cache the function to load data using st.cache_data
 @st.cache_data
@@ -67,12 +67,45 @@ except:
 # Streamlit app
 def app():
     # Header section
-    st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Diabetes Prediction App</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #555;'>Use this tool to predict diabetes based on health metrics.</p>", unsafe_allow_html=True)
-    
-    # Display an image in the header
+    st.markdown(
+        """
+        <style>
+        .header {
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            color: #4CAF50;
+        }
+        .sub-header {
+            text-align: center;
+            color: #555;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .footer {
+            text-align: center;
+            color: #777;
+            margin-top: 20px;
+        }
+        </style>
+        <h1 class="header">Diabetes Prediction App</h1>
+        <p class="sub-header">Empowering healthcare with AI-driven insights</p>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Display an image in the header with a responsive size
     img = Image.open(r"img.jpeg")
-    st.image(img, width=300, use_container_width=True)
+    st.image(img, use_container_width=True, caption="Your health, our priority")
 
     # Sidebar for input features
     st.sidebar.markdown("<h2 style='color: #4CAF50;'>Input Features</h2>", unsafe_allow_html=True)
@@ -93,12 +126,12 @@ def app():
     scaled_input_data = scaler.transform(reshaped_input_data)  # Scale input data
     prediction = model.predict(scaled_input_data)
 
-    if st.button("Predict"):
+    if st.button("Predict", key="predict_button", help="Click to predict diabetes status"):
         with st.spinner("Analyzing..."):
             if prediction == 1:
-                st.error("This person has diabetes.")
+                st.error("Prediction: This person has diabetes.", icon="🚨")
             else:
-                st.success("This person does not have diabetes.")
+                st.success("Prediction: This person does not have diabetes.", icon="✅")
 
     # Add model accuracy section
     if train_acc and test_acc:
@@ -106,9 +139,18 @@ def app():
         st.write(f"Train set accuracy: **{train_acc:.2f}**")
         st.write(f"Test set accuracy: **{test_acc:.2f}**")
 
-    # Footer section
-    st.markdown("<hr>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #555;'>Developed by <b>Gurjap Singh</b>. Age: 17 years (2024). LinkedIn: <a href='https://www.linkedin.com/in/gurjap-singh-46696332a/' target='_blank'>Gurjap Singh</a></p>", unsafe_allow_html=True)
+    # Footer section with developer details
+    st.markdown(
+        """
+        <hr>
+        <div class="footer">
+            <p><b>Developer:</b> Gurjap Singh, Age: 17</p>
+            <p>Machine Learning Enthusiast | Aspiring MIT Researcher</p>
+            <p><a href="https://www.linkedin.com/in/gurjap-singh-46696332a/" target="_blank">LinkedIn Profile</a></p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 if __name__ == '__main__':
     app()
