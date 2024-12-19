@@ -4,6 +4,7 @@ import streamlit as st
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
+import joblib
 from PIL import Image
 
 # Set page configuration
@@ -18,7 +19,7 @@ st.set_page_config(
 def load_data():
     return pd.read_csv('diabetes (2).csv')
 
-# Preprocess data
+# Cache the function to preprocess data
 @st.cache_data
 def preprocess_data(df):
     X = df.drop('Outcome', axis=1)
@@ -28,17 +29,23 @@ def preprocess_data(df):
     X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=1)
     return X_train, X_test, y_train, y_test, scaler
 
-# Train the model
+# Cache the function to train the model
 @st.cache_resource
 def train_model(X_train, y_train):
     model = RandomForestClassifier()
     model.fit(X_train, y_train)
     return model
 
-# Load data and train model
-diabetes_df = load_data()
-X_train, X_test, y_train, y_test, scaler = preprocess_data(diabetes_df)
-model = train_model(X_train, y_train)
+# Load or train model
+try:
+    model = joblib.load('diabetes_model.pkl')
+    scaler = joblib.load('scaler.pkl')
+except:
+    diabetes_df = load_data()
+    X_train, X_test, y_train, y_test, scaler = preprocess_data(diabetes_df)
+    model = train_model(X_train, y_train)
+    joblib.dump(model, 'diabetes_model.pkl')
+    joblib.dump(scaler, 'scaler.pkl')
 
 # Main App
 def app():
@@ -47,135 +54,122 @@ def app():
         """
         <style>
         body {
-            background: linear-gradient(to right, #e0f7fa, #f2f6fc);
             font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
         }
         .header {
             text-align: center;
-            font-size: 3rem;
+            font-size: 40px;
             font-weight: bold;
-            color: #2c3e50;
+            color: #333;
             margin-bottom: 20px;
         }
-        .subheader {
+        .sub-header {
             text-align: center;
-            font-size: 1.5rem;
-            color: #34495e;
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 30px;
         }
-        .about {
-            text-align: center;
-            margin-top: 50px;
-            padding: 20px;
-            background: #f1f8ff;
-            border-radius: 10px;
+        .section-title {
+            font-size: 24px;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        .sidebar-title {
+            font-size: 20px;
+            color: #4CAF50;
+            margin-bottom: 10px;
         }
         .button {
             background-color: #28a745;
             color: white;
+            padding: 10px 15px;
             border: none;
-            padding: 12px 30px;
-            font-size: 1.2rem;
             border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
+            width: auto;
         }
         .button:hover {
             background-color: #218838;
         }
-        .red-button {
-            background-color: #FF4136;
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            margin-top: 30px;
+        }
+        .link {
             color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 5px;
-            cursor: pointer;
+            text-decoration: none;
         }
-        .red-button:hover {
-            background-color: #d42d2b;
-        }
-        .input-section {
+        .result {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 30px;
-        }
-        .input-box {
-            width: 100px;
-            text-align: center;
-            font-size: 1.2rem;
-            padding: 5px;
-            margin: 0 10px;
-        }
-        .centered-image {
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-            width: 50%;
-        }
-        .result {
-            text-align: center;
-            font-size: 1.5rem;
-            margin-top: 30px;
+            font-size: 20px;
         }
         .result.success {
-            color: #28a745;
+            color: green;
         }
-        .result.warning {
-            color: #FF4136;
-        }
-        a {
-            color: white !important;
-            text-decoration: none;
+        .result.error {
+            color: red;
         }
         </style>
+        <div class="header">Diabetes Prediction App</div>
+        <div class="sub-header">AI-powered tool to assess diabetes risk using health parameters</div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown("<div class='header'>Diabetes Prediction</div>", unsafe_allow_html=True)
-    st.markdown("<div class='subheader'>An AI-Powered Tool for Health Insights</div>", unsafe_allow_html=True)
+    # Display developer image and about section
+    col1, col2 = st.columns([1, 3])
+    with col1:
+        img = Image.open("img.jpeg")  # Ensure the image path is correct
+        st.image(img, width=150, caption="Developer: Gurjap Singh")
+    with col2:
+        st.markdown(
+            """
+            <div style="font-size: 16px; color: #333;">
+            <p><b>About:</b> I am Gurjap Singh, a machine learning enthusiast with a passion for creating impactful AI applications. This app is designed to help users gain insights into their health using advanced machine learning techniques.</p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-    # Add image under the header
-    try:
-        img = Image.open("img.jpeg")
-        st.image(img, use_column_width="auto", caption="AI-Powered Tool", class_="centered-image")
-    except Exception as e:
-        st.error("Image not found. Please ensure the image is in the correct directory.")
+    # Sidebar for input features with plus/minus buttons
+    st.sidebar.markdown("<div class='sidebar-title'>Input Health Parameters</div>", unsafe_allow_html=True)
+    preg = st.sidebar.number_input('Pregnancies', min_value=0, max_value=17, value=3, step=1)
+    glucose = st.sidebar.number_input('Glucose', min_value=0, max_value=199, value=117, step=1)
+    bp = st.sidebar.number_input('Blood Pressure', min_value=0, max_value=122, value=72, step=1)
+    skinthickness = st.sidebar.number_input('Skin Thickness', min_value=0, max_value=99, value=23, step=1)
+    insulin = st.sidebar.number_input('Insulin', min_value=0, max_value=846, value=30, step=1)
+    bmi = st.sidebar.number_input('BMI', min_value=0.0, max_value=67.1, value=32.0, step=0.1)
+    dpf = st.sidebar.number_input('Diabetes Pedigree Function', min_value=0.078, max_value=2.42, value=0.3725, step=0.001)
+    age = st.sidebar.number_input('Age', min_value=21, max_value=81, value=29, step=1)
 
-    # Sidebar for input
-    st.sidebar.title("Input Features")
-    preg = st.sidebar.number_input("Pregnancies", 0, 17, 3)
-    glucose = st.sidebar.number_input("Glucose", 0, 199, 117)
-    bp = st.sidebar.number_input("Blood Pressure", 0, 122, 72)
-    skinthickness = st.sidebar.number_input("Skin Thickness", 0, 99, 23)
-    insulin = st.sidebar.number_input("Insulin", 0, 846, 30)
-    bmi = st.sidebar.number_input("BMI", 0.0, 67.1, 32.0)
-    dpf = st.sidebar.number_input("Diabetes Pedigree Function", 0.078, 2.42, 0.3725, 0.001)
-    age = st.sidebar.number_input("Age", 21, 81, 29)
-
-    # Prediction logic
+    # Main section for prediction results
+    st.markdown("<div class='section-title'>Prediction Results</div>", unsafe_allow_html=True)
     input_data = np.array([preg, glucose, bp, skinthickness, insulin, bmi, dpf, age]).reshape(1, -1)
-    prediction = model.predict(input_data)
+    scaled_input_data = scaler.transform(input_data)
+    prediction = model.predict(scaled_input_data)
 
-    # Prediction Button
-    if st.button("Predict", key="predict_button", use_container_width=True):
-        st.markdown("<div class='result'>", unsafe_allow_html=True)
-        if prediction == 1:
-            st.markdown("<span style='font-size: 2rem;'>✅</span> <span class='warning'>This person has diabetes.</span>", unsafe_allow_html=True)
-        else:
-            st.markdown("<span style='font-size: 2rem;'>✔️</span> <span class='success'>This person does not have diabetes.</span>", unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+    if st.button("Predict", key="predict_button"):
+        with st.spinner("Analyzing..."):
+            if prediction == 1:
+                st.markdown("<div class='result error'><i class='fas fa-exclamation-triangle'></i> This person has diabetes.</div>", unsafe_allow_html=True)
+            else:
+                st.markdown("<div class='result success'><i class='fas fa-check-circle'></i> This person does not have diabetes.</div>", unsafe_allow_html=True)
 
-    # About Section
+    # Footer with white link text
     st.markdown(
         """
-        <div class='about'>
-            <h3>About the Developer</h3>
-            <p>Gurjap Singh, 17 years old, AI and Machine Learning enthusiast.</p>
-            <a href='https://linkedin.com/in/gurjapsingh' target='_blank' class='red-button'>Connect on LinkedIn</a>
+        <div class="footer">
+            Created by Gurjap Singh | Contact: gurjapsidhu5666@gmail.com | <a href="https://linkedin.com/in/gurjapsingh" class="link" target="_blank">Connect on LinkedIn</a>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-app()
+if __name__ == '__main__':
+    app()
