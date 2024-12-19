@@ -49,7 +49,7 @@ except:
 
 # Main App
 def app():
-    # Header section with background and title
+    # Custom Styling using st.markdown
     st.markdown(
         """
         <style>
@@ -63,6 +63,14 @@ def app():
             color: #4CAF50;
             margin-top: 50px;
         }
+        .container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .content {
+            text-align: center;
+        }
         </style>
         """, unsafe_allow_html=True
     )
@@ -70,7 +78,13 @@ def app():
     # Header Title
     st.markdown('<div class="header"><h1>Diabetes Prediction App</h1></div>', unsafe_allow_html=True)
 
-    # Upload input fields for prediction
+    # Information paragraph
+    st.markdown("""
+    This app predicts whether a person has diabetes based on various health metrics.
+    Please input the following details to make a prediction.
+    """)
+
+    # Input fields in the sidebar for user to input data
     st.sidebar.header("Input Parameters")
     
     pregnancies = st.sidebar.number_input("Pregnancies", min_value=0, max_value=20, value=1)
@@ -92,11 +106,12 @@ def app():
         prediction = model.predict(input_data_scaled)
         prediction_proba = model.predict_proba(input_data_scaled)
 
-        # Show results
+        # Display results
+        st.subheader("Prediction Result:")
         if prediction == 0:
-            st.write("### Result: No Diabetes")
+            st.write("### No Diabetes")
         else:
-            st.write("### Result: Diabetes Detected")
+            st.write("### Diabetes Detected")
 
         st.write(f"Prediction Probability: {prediction_proba[0][1]*100:.2f}%")
 
