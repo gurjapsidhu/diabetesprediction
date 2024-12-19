@@ -123,6 +123,10 @@ def app():
         .result.warning {
             color: #FF4136;
         }
+        a {
+            color: white !important;
+            text-decoration: none;
+        }
         </style>
         """,
         unsafe_allow_html=True
