@@ -117,40 +117,15 @@ def app():
     # Sidebar for input features
     st.sidebar.markdown("<div class='sidebar-title'>Input Health Parameters</div>", unsafe_allow_html=True)
 
-    # Input fields with sliders
+    # Input fields without sliders
     preg = st.sidebar.number_input('Pregnancies', min_value=0, max_value=17, value=3, step=1, format="%d", key="preg")
-    preg_slider = st.sidebar.slider('Pregnancies (Slider)', min_value=0, max_value=17, value=3, step=1)
-
     glucose = st.sidebar.number_input('Glucose Level', min_value=0, max_value=200, value=117, step=1, key="glucose")
-    glucose_slider = st.sidebar.slider('Glucose Level (Slider)', min_value=0, max_value=200, value=117, step=1)
-
     bp = st.sidebar.number_input('Blood Pressure (mmHg)', min_value=0, max_value=130, value=72, step=1, key="bp")
-    bp_slider = st.sidebar.slider('Blood Pressure (Slider)', min_value=0, max_value=130, value=72, step=1)
-
     skinthickness = st.sidebar.number_input('Skin Thickness (mm)', min_value=0, max_value=100, value=23, step=1, key="skin")
-    skinthickness_slider = st.sidebar.slider('Skin Thickness (Slider)', min_value=0, max_value=100, value=23, step=1)
-
     insulin = st.sidebar.number_input('Insulin Level (µU/mL)', min_value=0, max_value=850, value=30, step=1, key="insulin")
-    insulin_slider = st.sidebar.slider('Insulin Level (Slider)', min_value=0, max_value=850, value=30, step=1)
-
     bmi = st.sidebar.number_input('BMI', min_value=0.0, max_value=70.0, value=32.0, step=0.1, key="bmi")
-    bmi_slider = st.sidebar.slider('BMI (Slider)', min_value=0.0, max_value=70.0, value=32.0, step=0.1)
-
     dpf = st.sidebar.number_input('Diabetes Pedigree Function', min_value=0.0, max_value=3.0, value=0.3725, step=0.001, key="dpf")
-    dpf_slider = st.sidebar.slider('Diabetes Pedigree Function (Slider)', min_value=0.0, max_value=3.0, value=0.3725, step=0.001)
-
     age = st.sidebar.number_input('Age', min_value=0, max_value=120, value=29, step=1, key="age")
-    age_slider = st.sidebar.slider('Age (Slider)', min_value=0, max_value=120, value=29, step=1)
-
-    # Sync slider and number input values
-    preg = preg_slider
-    glucose = glucose_slider
-    bp = bp_slider
-    skinthickness = skinthickness_slider
-    insulin = insulin_slider
-    bmi = bmi_slider
-    dpf = dpf_slider
-    age = age_slider
 
     # Main section for prediction results
     st.markdown("<div class='section-title'>Prediction Results</div>", unsafe_allow_html=True)
