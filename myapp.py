@@ -8,6 +8,9 @@ from sklearn.preprocessing import StandardScaler
 import joblib
 from PIL import Image
 
+# Set page configuration
+st.set_page_config(page_title="Diabetes Prediction", layout="wide")
+
 # Cache the function to load data
 @st.cache
 def load_data():
@@ -63,18 +66,17 @@ except:
 
 # Streamlit app
 def app():
-    st.title("Predict Diabetes")
-
-    # Load and resize image
+    # Header section
+    st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Diabetes Prediction App</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #555;'>Use this tool to predict diabetes based on health metrics.</p>", unsafe_allow_html=True)
+    
+    # Display an image in the header
     img = Image.open(r"img.jpeg")
-    img = img.resize((200, 200))  # Resize the image for faster loading
-    st.image(img, width=200)
+    st.image(img, width=300, use_column_width=False)
 
-    st.title('Diabetes Prediction')
-
-    # Create the input form for the user to input new data
-    st.sidebar.title('Input Features')
-    preg = st.sidebar.slider('Pregnancies', 0, 17, 3)
+    # Sidebar for input features
+    st.sidebar.markdown("<h2 style='color: #4CAF50;'>Input Features</h2>", unsafe_allow_html=True)
+    preg = st.sidebar.number_input('Pregnancies', min_value=0, max_value=17, value=3)
     glucose = st.sidebar.slider('Glucose', 0, 199, 117)
     bp = st.sidebar.slider('Blood Pressure', 0, 122, 72)
     skinthickness = st.sidebar.slider('Skin Thickness', 0, 99, 23)
@@ -83,32 +85,30 @@ def app():
     dpf = st.sidebar.slider('Diabetes Pedigree Function', 0.078, 2.42, 0.3725, 0.001)
     age = st.sidebar.slider('Age', 21, 81, 29)
 
-    # Make a prediction based on the user input
+    # Main section for results
+    st.markdown("<h2 style='color: #4CAF50;'>Results</h2>", unsafe_allow_html=True)
     input_data = [preg, glucose, bp, skinthickness, insulin, bmi, dpf, age]
     input_data_nparray = np.asarray(input_data)
     reshaped_input_data = input_data_nparray.reshape(1, -1)
     scaled_input_data = scaler.transform(reshaped_input_data)  # Scale input data
     prediction = model.predict(scaled_input_data)
 
-    # Display the prediction to the user
-    st.write('Based on the input features, the model predicts:')
-    if prediction == 1:
-        st.warning('This person has diabetes.')
-    else:
-        st.success('This person does not have diabetes.')
+    if st.button("Predict"):
+        with st.spinner("Analyzing..."):
+            if prediction == 1:
+                st.error("This person has diabetes.")
+            else:
+                st.success("This person does not have diabetes.")
 
-    # Display the model accuracy (if available)
+    # Add model accuracy section
     if train_acc and test_acc:
-        st.header('Model Accuracy')
-        st.write(f'Train set accuracy: {train_acc:.2f}')
-        st.write(f'Test set accuracy: {test_acc:.2f}')
+        st.markdown("<h2 style='color: #4CAF50;'>Model Accuracy</h2>", unsafe_allow_html=True)
+        st.write(f"Train set accuracy: **{train_acc:.2f}**")
+        st.write(f"Test set accuracy: **{test_acc:.2f}**")
 
-    # Developer Information
-    st.title("About Developer")
-    st.write("This app and ML model was developed by Gurjap Singh. The model uses Random Forest Classifier and is trained on a diabetes dataset.")
-    image1 = Image.open(r"1729270232599.jpg")
-    st.image(image1, width=200)
-    st.write("Gurjap Singh (https://www.linkedin.com/in/gurjap-singh-46696332a/) age: 17 years as per 2024. I am a machine learning and AI enthusiast and developer")
+    # Footer section
+    st.markdown("<hr>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; color: #555;'>Developed by <b>Gurjap Singh</b>. Age: 17 years (2024). LinkedIn: <a href='https://www.linkedin.com/in/gurjap-singh-46696332a/' target='_blank'>Gurjap Singh</a></p>", unsafe_allow_html=True)
 
 if __name__ == '__main__':
     app()
