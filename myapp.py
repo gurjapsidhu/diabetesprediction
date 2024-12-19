@@ -93,6 +93,7 @@ def app():
             display: block;
             margin-left: auto;
             margin-right: auto;
+            width: 50%;  /* Center button */
         }
         .button:hover {
             background-color: #C70039;  /* Darker shade for hover effect */
