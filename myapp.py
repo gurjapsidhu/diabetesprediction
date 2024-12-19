@@ -1,11 +1,9 @@
 import numpy as np
 import pandas as pd
 import streamlit as st
-from sklearn.model_selection import train_test_split
-from sklearn import svm
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
-
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 from PIL import Image
 
@@ -19,23 +17,31 @@ diabetes_mean_df = diabetes_df.groupby('Outcome').mean()
 X = diabetes_df.drop('Outcome', axis=1)
 y = diabetes_df['Outcome']
 
-# scale the input variables using StandardScaler
-scaler = StandardScaler()
-scaler.fit(X)
-X = scaler.transform(X)
-
 # split the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1)
 
-# create an SVM model with a linear kernel
-model = RandomForestClassifier()
+# Create the RandomForestClassifier model
+model = RandomForestClassifier(random_state=1)
+
+# Hyperparameter tuning using GridSearchCV
+param_grid = {
+    'n_estimators': [100, 200, 300],
+    'max_depth': [None, 10, 20, 30],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4]
+}
+grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=3, n_jobs=-1, verbose=2)
+grid_search.fit(X_train, y_train)
+
+# Get the best model from GridSearchCV
+best_model = grid_search.best_estimator_
 
 # train the model on the training set
-model.fit(X_train, y_train)
+best_model.fit(X_train, y_train)
 
 # make predictions on the training and testing sets
-train_y_pred = model.predict(X_train)
-test_y_pred = model.predict(X_test)
+train_y_pred = best_model.predict(X_train)
+test_y_pred = best_model.predict(X_test)
 
 # calculate the accuracy of the model on the training and testing sets
 train_acc = accuracy_score(train_y_pred, y_train)
@@ -46,9 +52,8 @@ def app():
     st.title("Predict Diabetes")
 
     img = Image.open(r"img.jpeg")
-    img = img.resize((200,200))
-    st.image(img,width=200)
-
+    img = img.resize((200, 200))
+    st.image(img, width=200)
 
     st.title('Diabetes Prediction')
 
@@ -67,7 +72,7 @@ def app():
     input_data = [preg, glucose, bp, skinthickness, insulin, bmi, dpf, age]
     input_data_nparray = np.asarray(input_data)
     reshaped_input_data = input_data_nparray.reshape(1, -1)
-    prediction = model.predict(reshaped_input_data)
+    prediction = best_model.predict(reshaped_input_data)
 
     # display the prediction to the user
     st.write('Based on the input features, the model predicts:')
@@ -76,21 +81,31 @@ def app():
     else:
         st.success('This person does not have diabetes.')
 
-    # display some summary statistics about the dataset
-    st.header('Dataset Summary')
-    st.write(diabetes_df.describe())
-
-    st.header('Distribution by Outcome')
-    st.write(diabetes_mean_df)
-
-    # display the model accuracy
-    st.header('Model Accuracy')
+    # Display model evaluation metrics
+    st.header('Model Evaluation')
     st.write(f'Train set accuracy: {train_acc:.2f}')
     st.write(f'Test set accuracy: {test_acc:.2f}')
+    
+    st.subheader('Classification Report')
+    st.text(classification_report(y_test, test_y_pred))
+
+    st.subheader('Confusion Matrix')
+    cm = confusion_matrix(y_test, test_y_pred)
+    st.write(cm)
+
+    # display the feature importance
+    st.header('Feature Importance')
+    feature_importance = pd.DataFrame({
+        'Feature': X.columns,
+        'Importance': best_model.feature_importances_
+    }).sort_values(by='Importance', ascending=False)
+    st.write(feature_importance)
+
     st.title("About Developer")
-    st.write("This app and ml model was developed by Gurjap Singh trained that is trained  on a diabetes dataset. The model uses Random Forest Classifier and is trained on a 75%-25% split of the dataset")
-    image1=Image.open(r"1729270232599.jpg")
-    st.image(image1,width=200)
-    st.write("Gurjap Singh (https://www.linkedin.com/in/gurjap-singh-46696332a/) age: 17 years as per 2024. I am a machine learning and ai enthusiast and developer")
+    st.write("This app and ML model was developed by Gurjap Singh, trained on a diabetes dataset. The model uses Random Forest Classifier and is trained on a 75%-25% split of the dataset.")
+    image1 = Image.open(r"1729270232599.jpg")
+    st.image(image1, width=200)
+    st.write("Gurjap Singh (https://www.linkedin.com/in/gurjap-singh-46696332a/) age: 17 years as of 2024. I am a machine learning and AI enthusiast and developer.")
+
 if __name__ == '__main__':
     app()
