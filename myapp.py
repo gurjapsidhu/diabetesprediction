@@ -3,7 +3,6 @@ import pandas as pd
 import streamlit as st
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler
 import joblib
 from PIL import Image
@@ -65,11 +64,11 @@ def app():
             margin-top: 50px;
         }
         </style>
-        <div class="header">
-            <h1>Diabetes Prediction App</h1>
-        </div>
-        """
+        """, unsafe_allow_html=True
     )
+
+    # Header Title
+    st.markdown('<div class="header"><h1>Diabetes Prediction App</h1></div>', unsafe_allow_html=True)
 
     # Upload input fields for prediction
     st.sidebar.header("Input Parameters")
