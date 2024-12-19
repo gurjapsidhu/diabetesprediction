@@ -84,7 +84,7 @@ def app():
         .button {
             background-color: #4CAF50;  /* Green color */
             color: white;
-            padding: 15px 30px;  /* Increased padding for bigger button */
+            padding: 30px 60px;  /* Increased padding for bigger button */
             border: none;
             border-radius: 10px;
             font-size: 24px;  /* Larger font size */
@@ -95,9 +95,7 @@ def app():
             margin-right: auto;
             width: 50%;  /* Center button */
         }
-        .button:hover {
-            background-color: #45a049;  /* Darker shade for hover effect */
-        }
+     
         .footer {
             text-align: center;
             font-size: 14px;
